@@ -1,0 +1,348 @@
+<!doctype html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>Neural ODEs</title>
+
+		<link rel="stylesheet" href="dist/reset.css">
+		<link rel="stylesheet" href="dist/reveal.css">
+		<link rel="stylesheet" href="dist/theme/white.css">
+
+		<!-- Theme used for syntax highlighted code -->
+		<link rel="stylesheet" href="plugin/highlight/monokai.css">	  
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section><h1>Neural Ordinary Differential Equations</h1></section>
+				<section>
+					<h2>Recap: ODE</h2>
+					\[
+					\frac{d^2\bold{x}}{d t^2} = \frac{F(\dot{\bold{x}}, \bold{x}, t)}{m}
+					\]
+					<p class="fragment">\[F(t, \bold{x}, \bold{x}^{(1)}, ... , \bold{x}^{(n-1)}) = \bold{x}^{(n)}\]</p>
+				</section>
+				<section>
+					<h2>Stochastic ODE</h2>
+					<iframe src="https://demonstration-storage.education-team.ru/brownian2/index.html" style="width: 820px; height: 500px; border: none;" scrolling="no"></iframe></section>
+				<section>
+					<h2>Initial value problem</h2>
+					\[
+					\begin{cases} \frac{dx}{dt} = f(x(t), t)) \\ x(t_0) = x_0 \end{cases}
+					\]
+					<p class="fragment">\[
+					x(t) = x(t_0) + \int_{t_0}^{t} f(x(t), t)dt
+					\]</p>
+				</section>
+				<section>
+					<h2>Quizz</h2>
+					What is the difference between an ordinary differential equation (ODE) and a partial differential equation (PDE)?
+				</section>
+				<section
+					<h2>Math time</h2>
+					Solve the following ODE:
+					\[\begin{aligned}
+					\frac{dx}{dt} &amp; = \sin(t)+1/t \\
+					t_0 &amp; =\pi/2 \\
+					x(t_0) &amp; = -\ln(3) \\
+					x(3\pi) &amp; = ?
+					\end{aligned}\]
+				</section>
+				<section>
+					<h2>Here is some GPT to "help"</h2>
+					<p class="r-fit-text">
+					\[\begin{aligned}
+					x(t) &amp; = x(t_0) + \int_{t_0}^{t} f(x(t), t)dt \\
+					&amp; = -\ln(3) + \int_{\pi/2}^{t} \sin(t)+1/t dt \\
+					&amp; = -\ln(3) + \left[ -\cos(t) + \ln(t) \right]_{\pi/2}^{t} \\
+					&amp; = -\ln(3) + \left[ -\cos(3\pi) + \ln(3\pi) \right] - \left[ -\cos(\pi/2) + \ln(\pi/2) \right] 
+					\end{aligned}\]
+					</p>
+					<p class="fragment">Surprisingly enough, it's correct</p>
+				</section>
+				<section>
+					<h1 class="r-fit-text">Numerical integration of ODE</h1>
+				</section>
+				<section>
+					<h2>Euler's method</h2>
+					<iframe src="https://demonstration-storage.education-team.ru/ode_euler/index.html" style="width: 820px; height: 500px; border: none;" scrolling="no"></iframe>
+				</section>
+				<section>
+					<h2>Euler's method</h2>
+					<p class="r-fit-text">\[\tilde{x}(t+\tau) = \tilde{x}(t) + \tau f(\tilde{x}(t), t)\]</p>
+				</section>
+				<section>
+					<h2>Instability</h2>
+					<iframe src="https://demonstration-storage.education-team.ru/ode/index.html" style="width: 820px; height: 500px; border: none;" scrolling="no"></iframe>
+				</section>
+				<section>
+					<h2>Error estimation</h2>
+					<div class="r-fit-text">
+						\[x(t+\tau) - \tilde{x}(t+\tau) = x(t+\tau) - x(t) - \tau x'(t) \]
+						<p class="fragment">\[x(t+\tau) = x(t) + x'(t)\tau + \frac{1}{2} x''(t) \tau^2 + O(\tau^3)\]</p>
+						<p class="fragment">\[x(t+\tau) - \tilde{x}(t+\tau) = \frac{1}{2} x''(t) \tau^2 + O(\tau^3) \]</p>
+						<p class="fragment">\[\sum_{s=1}^{\frac{t-t_0}{\tau}} \left[\frac{1}{2} x''(t_0+s\tau)\tau^2+O(\tau^3)\right]=C(t-t_0)\tau + O(\tau^2)\]</p>
+					</div>
+				</section>
+				<section>
+					<h2>Midpoint method</h2>
+					<iframe src="https://demonstration-storage.education-team.ru/ode_midpoint/index.html" style="width: 820px; height: 500px; border: none;" scrolling="no"></iframe>
+				</section>
+				<section>
+					<h2>Midpoint math</h2>
+					<div class="r-fit-text">
+						\[\begin{aligned}
+						x_{n+1/2} &amp; = x_{n}+\frac{\tau}{2} f(x_{n}, t_{n}) \\
+						x_{n+1} &amp; = x_{n}+\tau f (x_{n+1/2}, t_n+1/2\tau)
+						\end{aligned}
+						\]
+						<p class="fragment">What is the order of the method?</p>
+					</div>
+				</section>
+				<section>
+					<h2>Runge-Kutta method</h2>
+					<iframe src="https://demonstration-storage.education-team.ru/ode_rungekutta/index.html" style="width: 820px; height: 500px; border: none;" scrolling="no"></iframe>
+					<p class="fragment">Sorry, I got lazy with the Copilot</p>
+				</section>
+				<section>
+					<h2>Runge-Kutta method</h2>
+					<div style="display: flex; justify-content: center;" class="r-stretch">
+						<img src="https://upload.wikimedia.org/wikipedia/commons/8/8d/Voit_202_Karl_Runge.jpg" style="height: 100%">
+						<img src="https://upload.wikimedia.org/wikipedia/commons/3/32/Martin_Wilhelm_Kutta.jpg" style="height: 100%">
+					</div>
+				</section>
+				<section>
+					<h2>Runge-Kutta</h2>
+					<iframe src="https://demonstration-storage.education-team.ru/ode_rk4/index.html" style="width: 820px; height: 500px; border: none;" scrolling="no"></iframe>
+				</section>
+				<section>
+					<h2>Für das Protokoll</h2>
+					<p class="r-fit-text">
+						\[
+						\begin{aligned}
+						k_1 &amp; = f(x_n,t_n) \\
+						k_2 &amp; = f(x_n+\tau k_1/2, t_n+\tau/2) \\
+						k_3 &amp; = f(x_n+\tau k_2/2, t_n+\tau/2) \\
+						k_4 &amp; = f(x_n+\tau k_3, t_n+\tau) \\
+						x_{n+1} &amp;= x_n+\frac{1}{6}\tau (k_1+ 2k_2+2k_3+k_4)
+						\end{aligned}
+						\]
+					</p>
+				</section>
+				<section>
+					<h2>When is an ODE integration method is called 3-rd order?</h2>
+					<ul class="r-fit-text">
+						<li>In uses a 3-rd order polynomial</li>
+						<li>Its local truncation error is of the order $O(\tau^3)$, where $\tau$ is the time step</li>
+						<li>Its total accumulated error is of the order $O(\tau^3)$, where $\tau$ is the time step</li>
+						<li>It uses 3 evaluations of the derivative function $f(x(t), t)$</li>
+					</ul>
+				</section>
+				<section>
+					<h1 class="r-fit-text">Neural Ordinary Differential Equations</h1>
+				</section>
+				<section>
+					<h2>ResNet</h2>
+					<div class="r-stack">
+						<img class="fragment" src="https://storage.education-team.ru/resources/2023-02-17_16-13-06_1676625242.png">
+						<img class="fragment" src="https://i.redd.it/n9fgba8b0qr01.png" style="height: 600px;">
+						<img class="fragment" src="https://storage.education-team.ru/resources/Untitled_1_1676625294.gif">
+					</div>
+				</section>
+				<section>
+					<h2>Reuse weights between layers</h2>
+					<p class="r-fit-text">
+						\[\bold{z}_{l+1}=\bold{z}_l+f_\theta(\bold{z}_l, l)\]
+					</p>
+				</section>
+				<section>
+					<h2>Layer index → time</h2>
+					<p class="r-fit-text">
+						\[\frac{d\bold{z}}{dt}=f_\theta(\bold{z}(t),  t)\]
+					</p>
+				</section>
+				<section>
+					<h2>ODE network</h2>
+					<div style="display: flex; justify-content: center;" class="r-stretch">
+						<img src="assets/resnet.svg" style="height: 100%">
+						<div class="r-stack">
+							<img src="https://upload.wikimedia.org/wikipedia/commons/3/32/Martin_Wilhelm_Kutta.jpg" style="height: 100%" class="fragment fade-out ">
+							<img src="assets/odenet.svg" style="height: 100%" class="fragment">
+						</div>
+					</div>
+					</section>
+				</section>
+				<section>
+					<h2>NeuralODE definition</h2>
+					<div class="r-fit-text">
+						\[
+						\begin{cases}
+						\bold{y}=\bold{z}(t_1) \\
+						\bold{z}(t_0) = \bold{x} \\
+						\frac{d\bold{z}}{dt}=f(\bold{z}(t),  t, \theta)
+						\end{cases}
+						\]
+					</div>
+				</section>
+				<section>
+					<h1 class="r-fit-text">Training NeuralODE</h1>
+				</section>
+				<section>
+					<h2>Optimisation problem</h2>
+					<p class="r-fit-text">
+					\[\argmin_\theta \mathbb{E}_{\bold{x}\in X, \bold{y}\in Y}L\left(\bold{y}, \text{ODESOLVE}(\bold{x}, f, t_0, t_1,\theta)\right)\]
+					</p>
+					<p class="fragment">Can we backprop?</p>
+					<p class="fragment">Yes, but for $O\left(N_\text{steps}\right)$ memory</p>
+				</section>
+				<section>
+					<h2>Meet adjoint</h2>
+					<p class="r-fit-text">
+					\[
+					\begin{aligned}
+						\bold{z}(t_1) &amp; = \bold{z}(t_0) + \int_{t_0}^{t_1}f(\bold{z}(t),t,\theta)dt \\
+						\bold{a}(t) &amp; = \partial L / \partial \bold{z}(t) \\
+						\frac{d\bold{a}}{dt} &amp; = -\bold{a}(t)^T\frac{\partial f(\bold{z}(t),t,\theta)}{\partial \bold{z}}
+					\end{aligned}
+					\]
+					</p>
+				</section>
+				<section>
+					<h2>Adjoint with trajectory loss</h2>
+					<img src="assets/adjoint.svg" style="height: 100%">
+				</section>
+				<section>
+					<h2>NeuralODE vs RNN</h2>
+					For time series
+					<ul>
+						<li>Native support of irregular time intervals</li>
+						<li>Smooth trajectory</li>
+					</ul>
+					<div style="display: flex; justify-content: center;" class="r-stretch">
+						<img src="assets/rnn_predictions_test_11.svg">
+						<img src="assets/rnn_predictions_test_13.svg">
+						<img src="assets/ode_30sp_predictions_test_11.svg">
+						<img src="assets/ode_30sp_predictions_test_13.svg">
+					</div>
+				</section>
+				<section>
+					<h1 class="r-fit-text">Neural ODE in a generative model</h1>
+				</section>
+				<section>
+					<h2>Time series</h2>
+					<img src="assets/ode-rnn.svg" class="r-stretch">
+					<p>Hidden space trajectories</p>
+				</section>
+				<section>
+					<h2>ODE-RNN</h2>
+					<img src="assets/ode-rnn-algo.png" class="r-stretch">
+				</section>
+				<section>
+					<h2>Noisy data</h2>
+					<img src="assets/ode-rnn.gif" class="r-stretch">
+				</section>
+				<section>
+					<h2>Latent ODE aka ODE-VAE</h2>
+					<p class="r-fit-text">
+						\[z_0 \sim p(z_0)\]
+						\[z_0, z_1, …, z_N = \text{ODESolve}(f_\theta, z_0, (t_0, t_1, …, t_N))\]
+						\[x_i \overset{\text{indep.}}{\sim} p(x_i| z_i); i = 0, 1, …, N\]
+					</p>
+				</section>
+				<section>
+					<h2>Step 1: estimate posterior for $z_0$</h2>
+					<p class="r-fit-text">
+						$$
+						q(z_0| \{x_i, t_i\}_{i=0}^N) = \mathcal{N}(\mu_{z_0},\sigma_{z_0})
+						$$
+						$$
+						\mu_{z_0},\sigma_{z_0} = g_\phi(\text{ODE-RNN}_\phi ( \{x_i, t_i\}_{i=0}^N))
+						$$
+					</p>
+					<aside class="notes">
+						$g$ is a neural network that translates the final hidden state of the ODE-RNN into the mean and variance of $z_0$ distribution and $\phi$ are the
+						weights of the ODE-RNN model. ODE-RNN is run backwards in time from  $t_N$ to $t_0$.
+					</aside>
+				</section>
+				<section>
+					<h2>Step 2: latent dynamics</h2>
+					<p class="r-fit-text">
+						$$
+						\text{ODESolve}(f_\theta, z_0, (t_0, t_1, …, t_N))
+						$$
+					</p>
+				</section>
+				<section>
+					<h2>Step 3: predict</h2>
+					Sample $p(x_i|z_i)$ 
+					<aside class="notes">
+						Papers don't define $p(x_i|z_i)$. In the code, during training, they use Gaussian distribution with the mean being an output of a neural network with $z_i$
+						as input and variance being a fixed parameter. During inference, they output just the mean, which produces a smooth
+						trajectory and corresponds to treating the variance as undesirable observation noise. If modeling of noisy observations is desired,
+						one can substitute deterministic inference with sampling the Gaussian $p(x_i|z_i)$.
+					</aside>
+				</section>
+				<section>
+					<h2>Latent ODE</h2>
+					<img src="assets/Latent_ODE_ODE_encoder_1d_v2.svg" class="r-stretch">
+					<aside class="notes">
+						The Latent ODE model with an ODE-RNN encoder. To make predictions in this model, the
+						ODE-RNN encoder is run backward in time to produce an approximate posterior over the initial
+						state:$ q(z_0|\{x_i, t_i\}^N_{i=0})$. Given a sample of $z_0$, we can find the latent state at any point of interest by
+						solving an ODE initial-value problem.
+					</aside>
+				</section>
+				<section>
+					<h2>Physics: initial state is full state</h2>
+					<img src="assets/full_state.jpg" class="r-stretch">
+				</section>
+				<section>
+					<h2>Last touch: parameters</h2>
+					$$
+					\frac{d\bold{z}}{dt}=f_\theta(\bold{z}(t),t,\mu)
+					$$
+				</section>
+				<section>
+					<h2>Summary</h2>
+					<ul class="r-fit-text">
+						<li class="fragment">Neural ODEs are a natural model for modeling processes continuous in time</li>
+						<li class="fragment">In physics, a lot of processes also are subjects to conservation laws - see the next lecture</li>
+						<li class="fragment">NeuralODE can be used as a general-purpose supervised model, but is <i>not necessarily superior</i> in this role</li>
+					</ul>					
+				</section>
+				<section>
+					<h2>References</h2>
+					<ul class="r-fit-text">
+						<li><a href="https://proceedings.neurips.cc/paper/2018/hash/69386f6bb1dfed68692a24c8686939b9-Abstract.html">Chen, Ricky TQ, et al. "Neural ordinary differential equations." Advances in neural information processing systems 31 (2018)</a></li>
+						<li><a href="https://proceedings.neurips.cc/paper/2019/hash/42a6845a557bef704ad8ac9cb4461d43-Abstract.html">Rubanova, Yulia, Ricky TQ Chen, and David K. Duvenaud. "Latent ordinary differential equations for irregularly-sampled time series." Advances in neural information processing systems 32 (2019)</a></li>
+						<li><a href="http://doi.org/10.1098/rspa.2021.0162">Lee, Kookjin, and Eric J. Parish. "Parameterized neural ordinary differential equations: Applications to computational physics problems." Proceedings of the Royal Society A 477.2253 (2021): 20210162.</a></li>
+						<li>Interactive visualisations by <a href="https://sunandstuff.com/">Oleg Danilov</a></li>
+						<li><a href="https://en.pelican.study/classroom/251/dialogs/4390/run/">Our textbook on NeuralODE</a></li>
+					</ul>
+				</section>
+				<section>
+					<h1 class="r-fit-text">Questions?</h1>
+				</section>
+			</div>
+		</div>
+
+		<script src="dist/reveal.js"></script>
+		<script src="plugin/notes/notes.js"></script>
+		<script src="plugin/math/math.js"></script>
+		<script src="plugin/highlight/highlight.js"></script>
+		<script>
+			// More info about initialization & config:
+			// - https://revealjs.com/initialization/
+			// - https://revealjs.com/config/
+			Reveal.initialize({
+				hash: true,
+				disableLayout: false,
+				slideNumber: true,
+				// Learn about plugins: https://revealjs.com/plugins/
+				plugins: [ RevealMath.KaTeX, RevealHighlight, RevealNotes ]
+			});
+		</script>
+	</body>
+</html>
